@@ -1,0 +1,381 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: MS-Avatare\n"
+"POT-Creation-Date: 2023-12-19 22:48+0100\n"
+"PO-Revision-Date: 2023-12-19 22:49+0100\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.1\n"
+"X-Poedit-Basepath: ../..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: avatars.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;"
+"_n_noop:1,2;_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+"X-Poedit-SearchPathExcluded-1: psource/psource-plugin-update/vendor\n"
+
+#: avatars-files/avatar.php:11
+#, fuzzy
+msgid "Invalid Request"
+msgstr "Invalid Request"
+
+#: avatars-files/avatar.php:16
+#, fuzzy
+msgid "404 &#8212; Invalid Avatar Type."
+msgstr "404 - Invalid Avatar Type."
+
+#: avatars-files/avatar.php:19
+#, fuzzy
+msgid "404 &#8212; Invalid Avatar Size."
+msgstr "404 - Invalid Avatar Size."
+
+#: avatars-files/front/avatar-signup.php:42
+#, fuzzy
+msgid "The select file type is invalid. File must be gif, png, jpg or jpeg."
+msgstr "The select file type is invalid. File must be gif, png, jpg or jpeg."
+
+#: avatars-files/front/avatar-signup.php:54
+#, fuzzy
+msgid "Your Avatar"
+msgstr "Your Avatar"
+
+#: avatars-files/front/avatar-signup.php:66
+#, fuzzy
+msgid "Choose a file"
+msgstr "Choose a file"
+
+#: avatars-files/front/avatar-signup.php:86
+#, fuzzy
+msgid "There was an error uploading the file. Please try with another image"
+msgstr "There was an error uploading the file. Please try with another image"
+
+#: avatars-files/front/widget.php:10
+#, fuzzy
+msgid "Avatare Widget"
+msgstr "Avatars widget"
+
+#: avatars-files/front/widget.php:52
+msgid "Titel:"
+msgstr "Title:"
+
+#: avatars-files/front/widget.php:54
+#, fuzzy
+msgid "Avatar Größe:"
+msgstr "Avatar size:"
+
+#: avatars.php:44
+#, fuzzy
+msgid "Das Avatare-Plugin ist nur mit WordPress Multisite kompatibel."
+msgstr "The Avatars plugin is only compatible with WordPress Multisite."
+
+#: avatars.php:180
+#, fuzzy
+msgid ""
+"BuddyPress hat ein eigenes Avatar-System. Die Avatars-Plugin-Funktionen "
+"wurden deaktiviert. Bitte entferne die Dateien."
+msgstr ""
+"BuddyPress has its own avatar system. The avatars plugin functions have "
+"been deactivated. Please remove the files."
+
+#: avatars.php:211
+#, fuzzy, php-format
+msgid ""
+"Das Avatare-Plugin speichert jetzt Dateien in %s. Dein alter Ordner wurde "
+"verschoben."
+msgstr ""
+"The avatar plugin now saves files in %s. Your old folder has been moved."
+
+#: avatars.php:213
+#, fuzzy, php-format
+msgid ""
+"Das Avatars-Plugin speichert jetzt Dateien in %s. Dein alter Ordner wurde "
+"kopiert. Bitte überprüfe, ob alles einwandfrei funktioniert, und lösche den "
+"alten Ordner manuell."
+msgstr ""
+"The Avatars plugin now saves files in %s. Your old folder has been copied. "
+"Please check that everything is working properly and delete the old folder "
+"manually."
+
+#: avatars.php:217
+#, fuzzy, php-format
+msgid ""
+"Das Avatars-Plugin speichert jetzt Dateien in %s. Stelle sicher, dass das "
+"Verzeichnis vom Server beschreibbar ist."
+msgstr ""
+"The Avatars plugin now saves files in %s. Make sure that the directory is "
+"writable by the server."
+
+#: avatars.php:223
+#, fuzzy, php-format
+msgid ""
+"Das Avatars-Plugin speichert jetzt Dateien in %s. Stelle sicher, dass das "
+"übergeordnete Verzeichnis vom Server beschreibbar ist."
+msgstr ""
+"The Avatars plugin now saves files in %s. Make sure that the parent "
+"directory is writable by the server."
+
+#: avatars.php:239
+#, fuzzy, php-format
+msgid ""
+"Das Avatars-Plugin konnte das Verzeichnis %s nicht erstellen. Ist das "
+"übergeordnete Verzeichnis vom Server beschreibbar?"
+msgstr ""
+"The Avatars plugin could not create the directory %s. Is the parent "
+"directory writable by the server?"
+
+#: avatars.php:350
+#, fuzzy
+msgid "Lokal (Avatare Plugin)"
+msgstr "Local (Avatars Plugin)"
+
+#: avatars.php:403
+#, fuzzy
+msgid "Seiten-Avatar"
+msgstr "Page avatar"
+
+#: avatars.php:406 avatars.php:408 avatars.php:417 avatars.php:1071
+#, fuzzy
+msgid "Dein Avatar"
+msgstr "Your avatar"
+
+#: avatars.php:412 avatars.php:424
+#, fuzzy
+msgid "Benutzer-Avatar bearbeiten"
+msgstr "Edit user avatar"
+
+#: avatars.php:468
+#, fuzzy
+msgid "Avatar Settings"
+msgstr "Avatar Settings"
+
+#: avatars.php:473
+#, fuzzy
+msgid ""
+"Dies ist Dein \"Benutzer\"-Avatar. Es wird angezeigt, wenn Du Kommentare "
+"hinterlässt, in den Foren posten und wenn Deine beliebten Beiträge auf der "
+"Webseite angezeigt werden."
+msgstr ""
+"This is your \"user\" avatar. It will be displayed when you leave comments, "
+"post in the forums and when your popular posts are displayed on the website."
+
+#: avatars.php:478 avatars.php:480 avatars.php:482
+#, fuzzy
+msgid "Avatar ändern"
+msgstr "Change avatar"
+
+#: avatars.php:623
+#, fuzzy
+msgid "Image could not be processed. Please go back and try again."
+msgstr "Image could not be processed. Please go back and try again."
+
+#: avatars.php:623
+#, fuzzy
+msgid "Image Processing Error"
+msgstr "Image Processing Error"
+
+#: avatars.php:649
+#, fuzzy
+msgid "There was an error uploading the file, please try again."
+msgstr "There was an error uploading the file, please try again."
+
+#: avatars.php:684 avatars.php:1016 avatars.php:1140
+#, fuzzy
+msgid ""
+"Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuche es "
+"erneut."
+msgstr "An error occurred while uploading the file. Please try again."
+
+#: avatars.php:736 avatars.php:897 avatars.php:1125
+#, fuzzy
+msgid ""
+"Die hochgeladene Datei ist kein gültiges Bild. Bitte versuche es erneut."
+msgstr "The uploaded file is not a valid image. Please try again."
+
+#: avatars.php:799 avatars.php:805
+#, fuzzy
+msgid "Avatar zurücksetzen."
+msgstr "Reset avatar."
+
+#: avatars.php:829 avatars.php:860
+#, fuzzy
+msgid "Avatar aktualisiert"
+msgstr "Avatar updated"
+
+#: avatars.php:836 avatars.php:867
+#, fuzzy
+msgid "Avatar aktualisiert."
+msgstr "Avatar updated."
+
+#: avatars.php:885
+#, fuzzy
+msgid "Netter Versuch..."
+msgstr "Nice try..."
+
+#: avatars.php:912
+#, fuzzy
+msgid ""
+"Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuchen Sie es "
+"erneut."
+msgstr "An error occurred while uploading the file. Please try again."
+
+#: avatars.php:936 avatars.php:953 avatars.php:1042 avatars.php:1063
+#: avatars.php:1165 avatars.php:1182
+msgid "Bild zuschneiden"
+msgstr "Crop Image"
+
+#: avatars.php:939 avatars.php:1049 avatars.php:1168
+#, fuzzy
+msgid "Wähle den Teil des Bildes aus, den Du als Avatar verwenden möchtest."
+msgstr "Select the part of the image you want to use as your avatar."
+
+#: avatars.php:960
+#, fuzzy
+msgid "Seiten Avatar"
+msgstr "Avatar pages"
+
+#: avatars.php:962
+#, fuzzy
+msgid ""
+"Dies ist Dein \"Seiten\"-Avatar. Es wird angezeigt, wenn Dein Blog "
+"aufgelistet wird (z.B. auf der Startseite des Netzwerks).."
+msgstr ""
+"This is your \"page\" avatar. It will be displayed when your blog is listed "
+"(e.g. on the home page of the network)."
+
+#: avatars.php:965 avatars.php:1082 avatars.php:1194
+#, fuzzy
+msgid "Neuen Avatar hochladen"
+msgstr "Upload new avatar"
+
+#: avatars.php:970 avatars.php:1087 avatars.php:1199
+#, fuzzy
+msgid "Zulässige Formate: JPEG, GIF und PNG"
+msgstr "Permitted formats: JPEG, GIF and PNG"
+
+#: avatars.php:971
+#, fuzzy
+msgid ""
+"Wenn Du Probleme beim Zuschneiden Deines Bildes hast, verwende bitte die "
+"alternative Upload-Methode (Schaltfläche \"Alternativer Upload\")."
+msgstr ""
+"If you have problems cropping your image, please use the alternative upload "
+"method (\"Alternative upload\" button)."
+
+#: avatars.php:973 avatars.php:1090 avatars.php:1202
+msgid "Hochladen"
+msgstr "Upload"
+
+#: avatars.php:974 avatars.php:1091 avatars.php:1203
+#, fuzzy
+msgid "Alternatives Hochladen"
+msgstr "Alternative upload"
+
+#: avatars.php:975 avatars.php:1092 avatars.php:1204
+msgid "Zurücksetzen"
+msgstr "Reset"
+
+#: avatars.php:1088
+#, fuzzy
+msgid ""
+"Wenn Du Probleme beim Zuschneiden Deines Bildes hast, verwende bitte die "
+"alternative Upload-Methode (Schaltfläche \"Alternatives Hochladen\")."
+msgstr ""
+"If you have problems cropping your image, please use the alternative upload "
+"method (\"Alternative upload\" button)."
+
+#: avatars.php:1191
+#, fuzzy
+msgid "Benutzer Avatar"
+msgstr "User avatar"
+
+#: avatars.php:1200
+#, fuzzy
+msgid ""
+"Wenn Du Probleme beim Zuschneiden des Bildes hast, verwende bitte die "
+"alternative Upload-Methode (Schaltfläche \"Alternatives Hochladen\").."
+msgstr ""
+"If you have problems cropping the image, please use the alternative upload "
+"method (\"Alternative upload\" button)."
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:56
+#, fuzzy
+msgid "View details"
+msgstr "View details"
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:79
+#, fuzzy, php-format
+msgid "Weitere Informationen zu %s"
+msgstr "Further information on %s"
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:130
+#, fuzzy
+msgid "Auf neuere Version prüfen"
+msgstr "Check for newer version"
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:217
+#, fuzzy, php-format
+msgctxt "the plugin title"
+msgid "Keine neuere Version von %s im PSOURCE REPO gefunden."
+msgstr "No newer version of %s found in PSOURCE REPO."
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:219
+#, fuzzy, php-format
+msgctxt "the plugin title"
+msgid "Im PSOURCE REPO ist eine <b>neuere Version von %s</b> verfügbar!."
+msgstr "A <b>newer version of %s</b> is available in the PSOURCE REPO!"
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:221
+#, fuzzy, php-format
+msgctxt "the plugin title"
+msgid ""
+"Entschuldige, es konnte nicht festgestellt werden, ob Updates für %s "
+"verfügbar sind."
+msgstr ""
+"Sorry, it could not be determined whether updates are available for %s."
+
+#: psource/psource-plugin-update/Puc/v5p0/Plugin/Ui.php:227
+#, fuzzy, php-format
+msgid "Unbekannter PSOURCE-UPDATTER-Status \"%s\""
+msgstr "Unknown PSOURCE-UPDATTER status \"%s\""
+
+#: psource/psource-plugin-update/Puc/v5p0/Vcs/PluginUpdateChecker.php:98
+#, fuzzy
+msgid "There is no changelog available."
+msgstr "There is no changelog available."
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "MS-Avatare"
+msgstr "MS avatars"
+
+#. Plugin URI of the plugin/theme
+#, fuzzy
+msgid "https://n3rds.work/piestingtal_source/ms-avatare/"
+msgstr "https://n3rds.work/piestingtal_source/ms-avatare/"
+
+#. Description of the plugin/theme
+#, fuzzy
+msgid ""
+"Ermöglicht Benutzern das Hochladen von \"Benutzeravataren\" und "
+"\"Blogavataren\", die dann in Kommentaren und Blog-/Benutzerlisten auf der "
+"Webseite angezeigt werden können"
+msgstr ""
+"Allows users to upload \"user avatars\" and \"blog avatars\", which can "
+"then be displayed in comments and blog/user lists on the website"
+
+#. Author of the plugin/theme
+#, fuzzy
+msgid "WMS N@W"
+msgstr "WMS N@W"
+
+#. Author URI of the plugin/theme
+#, fuzzy
+msgid "https://n3rds.work"
+msgstr "https://n3rds.work"
