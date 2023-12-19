@@ -13,27 +13,32 @@ Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", d
 
 == Description ==
 
-Dieses Plugin bietet ein paginiertes, vollständig durchsuchbares, Avatar inklusive, automatisches und ziemlich gut aussehendes Verzeichnis aller Blogs auf Deiner ClassicPress Multisite.
+Mit ## Avatars können Multisite-Benutzer Profil- und Blog-Avatare hochladen, verwalten und teilen.
 
-= MS-Blogs-Verzeichnis erstellt eine einfache und anpassbare Liste aller Webseiten in Deinem Netzwerk. =
+Von „Selfies“ bis hin zu Firmenlogos helfen uns Bilder dabei, persönlich mit anderen Benutzern und Unternehmen im Internet in Kontakt zu treten. Dieses Plugin integriert Profilbilder auf eine Art und Weise, die dem ClassicPress-Kern ähnelt. Das Hinzufügen einer einfachen Avatar-Einstellungsfunktion zum Benutzerprofil und einer Option „Blog-Avatar“ unter „Einstellungen“ bringt eine überraschend neue Ebene der Benutzerbeteiligung.
 
-Dieses benutzerfreundliche Plugin automatisiert die Verwaltung von Webseiten-Listen vollständig, sodass Du sie schnell einrichten kannst. Jede hinzugefügte Webseite, jede Slogan-Änderung und jedes gelöschte Blog wird sofort aktualisiert, sodass ein stets aktuelles Verzeichnis vorhanden ist.
 
-= Passt sich dem Stil Deines Themes an =
+Die enthaltenen Avatar-Einstellungen geben Dir die Kontrolle
 
-Standardmäßig übernimmt MS-Blogs-Verzeichnis Stilelemente aus Deinem Design, um sie perfekt in jedes Theme zu integrieren. Oder füge mit dem integrierten Farbanpassungstool einen Farbtupfer hinzu, um dem Ganzen noch mehr Glanz zu verleihen. Mit der integrierten Verzeichnissuche können Benutzer Blogs in Deinem Netzwerk schnell finden und darin navigieren. Jede Einstellung, von der Anzeigereihenfolge bis zur Auflistung pro Seite, kann mit einem Klick angepasst werden.
+= Mehr Flexibilität und sicherer als Gravatar =
 
-= Verwendung =
+Anstatt Deine Benutzer auf die Webseite eines Drittanbieters wie Gravatar zu leiten und die von ihnen verwendeten Avatare nicht kontrollieren zu können, ermöglicht Dir dieses Plugin die Verwaltung und Kontrolle der auf Deiner Webseite verwendeten Avatare.
 
-Es sollte automatisch eine Seite mit dem Namen „Sites“ auf Deiner Hauptseite erstellen, auf der jeder nach einer Website suchen kannst. Für den Fall, dass die Seite nicht automatisch erstellt wird, musst Du lediglich eine Seite mit dem Slug „Blogs“ ohne Anführungszeichen erstellen.
+= Schneide jedes Bild perfekt zu =
 
-= Anpassung =
+Lade ein Bild beliebiger Form hoch und triff mit dem Zuschneidewerkzeug die perfekte Auswahl. Avatare werden in einem eigenen Ordner gespeichert, sodass Deine Medienbibliothek nicht mit all den tollen Profilbildern gefüllt wird, die Deine Benutzer hochladen.
 
-Du kannst den von Blogs Directory verwendeten Seiten-Slug ändern, indem Du blogs-directory.php öffnest und den Slug in Zeile 45 bearbeitest, der standardmäßig wie folgt lautet: define('BLOGS_DIRECTORY_SLUG', 'your-slug');
+= Benutzer- UND Blog-Avatare =
+
+Du möchtest, dass Benutzer tolle Avatare zum Kommentieren und für die Eingabe in ihre Autorenprofile haben, aber was ist, wenn Du Deine Webseiten in einem Verzeichnis auflisten oder auf der Homepage Deines Netzwerks präsentieren möchtest? 
+MS-Avatare löst dieses Problem, indem es Benutzern ermöglicht, sowohl persönliche als auch Blog-Avatare festzulegen. 
+Verknüpfe Benutzernamen mit Gesichtern und Blog-Titel mit Unternehmensbranding – füge mit Avataren Profilbilder zu ClassicPress hinzu.
+
+[Projekt Seite](https://n3rds.work/piestingtal_source/ms-avatare/)
+[GitHub](https://github.com/cp-psource/blogs-directory)
+
 
 [POWERED BY PSOURCE](https://n3rds.work/psource_kategorien/psource-plugins/)
-
-[GitHub](https://github.com/cp-psource/blogs-directory)
 
 == Mehr PSOURCE ==
 

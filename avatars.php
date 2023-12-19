@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: MS-Avatare
-Plugin URI: https://n3rds.work/wiki/piestingtal-source/avatare/
+Plugin URI: https://n3rds.work/piestingtal_source/ms-avatare/
 Description: Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", die dann in Kommentaren und Blog-/Benutzerlisten auf der Webseite angezeigt werden können
 Author: WMS N@W
 Author URI: https://n3rds.work
