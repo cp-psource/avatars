@@ -89,3 +89,9 @@ Halte Dich mit unserem [Newsletter](https://n3rds.work/webmasterservice-n3rdswor
 == ChangeLog ==
 
 = 1.0.1 =
+
+* Fix: Deprecated .change()
+
+= 1.0.0 =
+
+* Release

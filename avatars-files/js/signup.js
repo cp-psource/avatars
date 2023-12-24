@@ -48,7 +48,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           //  with uninit() later, to allow updating that settings
           if($element.data('ajaxUploader-setup') === true) return;
 
-          $element.change(function()
+          $element.on("change", function()
           {
             // since a new image was selected, reset the marker
             uploading_file = false;
