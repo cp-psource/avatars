@@ -118,7 +118,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           var handleResponse = function(loadedFrame, element) {
             var response, responseStr = loadedFrame.contentWindow.document.body.innerHTML;
             try {
-              //response = $.parseJSON($.trim(responseStr));
               response = JSON.parse(responseStr);
             } catch(e) {
               response = responseStr;
@@ -144,7 +143,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             // Create an iframe to submit through, using a semi-unique ID
             var frame_id = 'ajaxUploader-iframe-' + Math.round(new Date().getTime() / 1000)
             $('body').after('<iframe width="0" height="0" style="display:none;" name="'+frame_id+'" id="'+frame_id+'"/>');
-            $('#'+frame_id).load(function() {
+            $('#'+frame_id).on("load", function() {
               handleResponse(this, element);
             });
 
