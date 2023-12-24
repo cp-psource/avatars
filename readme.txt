@@ -92,6 +92,7 @@ Halte Dich mit unserem [Newsletter](https://n3rds.work/webmasterservice-n3rdswor
 
 * Fix: Deprecated .change()
 * Fix: Deprecated .load()
+* Fix: Deprecated .submit()
 
 = 1.0.0 =
 

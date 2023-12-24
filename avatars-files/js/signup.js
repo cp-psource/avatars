@@ -103,7 +103,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
               // let onStart have the option to cancel the upload
               if(ret !== false)
               {
-                $element.parent('form').submit(function(e) { e.stopPropagation(); }).submit();
+                $element.parent('form').on("submit", function(e) { e.stopPropagation(); }).trigger("submit");
               }
             }
           };
