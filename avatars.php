@@ -5,7 +5,7 @@ Plugin URI: https://n3rds.work/piestingtal_source/ms-avatare/
 Description: Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", die dann in Kommentaren und Blog-/Benutzerlisten auf der Webseite angezeigt werden können
 Author: WMS N@W
 Author URI: https://n3rds.work
-Version: 1.0.0
+Version: 1.0.1
 Network: true
 Text Domain: avatars
 */
@@ -70,7 +70,7 @@ class Avatars {
 	/**
 	 * Current version of the plugin
 	 **/
-	var $current_version = '1.0.0';
+	var $current_version = '1.0.1';
 
 	private $avatars_dir;
 	public $user_avatar_dir;
