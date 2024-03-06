@@ -12,7 +12,7 @@ Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", d
 
 == Description ==
 
-Mit ## Avatars können Multisite-Benutzer Profil- und Blog-Avatare hochladen, verwalten und teilen.
+Mit MS-Avatare können Multisite-Benutzer Profil- und Blog-Avatare hochladen, verwalten und teilen.
 
 Von „Selfies“ bis hin zu Firmenlogos helfen uns Bilder dabei, persönlich mit anderen Benutzern und Unternehmen im Internet in Kontakt zu treten. Dieses Plugin integriert Profilbilder auf eine Art und Weise, die dem ClassicPress-Kern ähnelt. Das Hinzufügen einer einfachen Avatar-Einstellungsfunktion zum Benutzerprofil und einer Option „Blog-Avatar“ unter „Einstellungen“ bringt eine überraschend neue Ebene der Benutzerbeteiligung.
 
