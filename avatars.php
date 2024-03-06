@@ -5,7 +5,7 @@ Plugin URI: https://cp-psource.github.io/avatars/
 Description: Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", die dann in Kommentaren und Blog-/Benutzerlisten auf der Webseite angezeigt werden können
 Author: PSOURCE
 Author URI: https://github.com/cp-psource
-Version: 1.0.1
+Version: 1.0.2
 Text Domain: avatars
 Network: true
 */
@@ -85,7 +85,7 @@ class Avatars {
 	/**
 	 * Current version of the plugin
 	 **/
-	var $current_version = '1.0.1';
+	var $current_version = '1.0.2';
 
 	private $avatars_dir;
 	public $user_avatar_dir;
