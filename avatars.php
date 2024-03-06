@@ -1,17 +1,17 @@
 <?php
 /*
 Plugin Name: MS-Avatare
-Plugin URI: https://n3rds.work/piestingtal_source/ms-avatare/
+Plugin URI: https://cp-psource.github.io/avatars/
 Description: Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", die dann in Kommentaren und Blog-/Benutzerlisten auf der Webseite angezeigt werden können
-Author: WMS N@W
-Author URI: https://n3rds.work
+Author: PSOURCE
+Author URI: https://github.com/cp-psource
 Version: 1.0.1
-Network: true
 Text Domain: avatars
+Network: true
 */
 
 /*
-Copyright 2020-2024 WMS N@W (https://n3rds.work)
+Copyright 2020-2024 WMS N@W (https://github.com/cp-psource)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -27,18 +27,24 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-/*
-jQuery Ajax File Upload script by Jordan Feldstein (https://github.com/jfeldstein/jQuery.AjaxFileUpload.js/blob/master/README)
-See avatars-files/js/signup.js for more information
-*/
-
-require 'psource/psource-plugin-update/psource-plugin-updater.php';
-use Psource\PluginUpdateChecker\v5\PucFactory;
-$MyUpdateChecker = PucFactory::buildUpdateChecker(
-	'https://n3rds.work//wp-update-server/?action=get_metadata&slug=avatars', 
-	__FILE__, 
-	'avatars' 
+/**
+ * @@@@@@@@@@@@@@@@@ PS UPDATER 1.3 @@@@@@@@@@@
+ **/
+require 'psource/psource-plugin-update/plugin-update-checker.php';
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+ 
+$myUpdateChecker = PucFactory::buildUpdateChecker(
+	'https://github.com/cp-psource/avatars',
+	__FILE__,
+	'avatars'
 );
+ 
+//Set the branch that contains the stable release.
+$myUpdateChecker->setBranch('master');
+
+/**
+ * @@@@@@@@@@@@@@@@@ ENDE PS UPDATER 1.3 @@@@@@@@@@@
+ **/
 
 if( !is_multisite() )
 	exit( __( 'Das Avatare-Plugin ist nur mit WordPress Multisite kompatibel.', 'avatars' ) );
@@ -48,6 +54,15 @@ define( 'AVATARS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) . 'avatars-files/' );
 define( 'AVATARS_PLUGIN_URL', plugin_dir_url( __FILE__ ) . 'avatars-files/' );
 
 require_once( AVATARS_PLUGIN_DIR . 'helpers.php' );
+
+function avatars_plugin_admin_styles() {
+	// Pfad zur CSS-Datei
+	$css_file_url = plugin_dir_url( __FILE__ ) . 'avatars-dashboard.css';
+		
+	// CSS-Datei einbinden
+	wp_enqueue_style( 'avatars_plugin_styles', $css_file_url, array(), '1.0.0', 'all' );
+}
+add_action( 'admin_enqueue_scripts', 'avatars_plugin_admin_styles' );
 
 if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 	include_once( 'avatars-files/ajax.php' );
@@ -83,13 +98,13 @@ class Avatars {
 	private $default_blog_avatar = 'identicon';
 
 	private $local_default_avatar_url;
-	private $local_default_avatar_dir;
+	private $local_default_avatar_path;
 
 	private $nginx;
 
 
 	/**
-	 * PHP5 constructor
+	 * PHP8 constructor
 	 **/
 	function __construct() {
 		global $wp_version;
@@ -465,12 +480,12 @@ class Avatars {
 	function to_profile( $profileuser ) {
 		global $submenu_file;
 	?>
-		<h3><?php _e('Avatar Settings', 'avatars');?></h3>
+		<h3><?php _e('Netzwerk-Avatar Einstellungen', 'avatars');?></h3>
 		<table class="form-table">
 			<tbody>
 				<tr>
 					<th><label for="avatar">Avatar</label></th>
-					<td><p><?php _e( 'Dies ist Dein "Benutzer"-Avatar. Es wird angezeigt, wenn Du Kommentare hinterlässt, in den Foren posten und wenn Deine beliebten Beiträge auf der Webseite angezeigt werden.', 'avatars' ); ?></p>
+					<td><p><?php _e( 'Dies ist Dein "Benutzer"-Avatar. Es wird angezeigt, wenn Du Kommentare hinterlässt, in den Foren postest und wenn Deine beliebten Beiträge auf der Webseite angezeigt werden.', 'avatars' ); ?></p>
 					<p><?php echo get_avatar( $profileuser->ID ); ?><br></p>
 					<?php
 					if( IS_PROFILE_PAGE )
@@ -604,7 +619,7 @@ class Avatars {
 	 * @param String $avatar_path Destination path
 	 * 
 	 */
-	function crop_image( $type = 'user', $id, $tmp_file, $x1, $y1, $width, $height, $avatar_path ) {
+	function crop_image( $avatar_path, $id, $tmp_file, $x1, $y1, $width, $height, $type = 'user' ) {
 
 		if ( ! in_array( $type, array( 'user', 'blog' ) ) )
 			$type = 'user';
@@ -846,7 +861,7 @@ class Avatars {
 					$filename = stripslashes_deep( $_POST['file_name'] );
 					$tmp_file = $avatar_path . $filename;
 
-					$this->crop_image( 'user', $user_ID, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], $avatar_path );
+					$this->crop_image( $avatar_path, $user_ID, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], 'user' );
 					
 					if ( function_exists( 'moderation_image_insert' ) && 'user-avatar' == $plugin_page ) {
 						$protocol = is_ssl() ? 'https://' : 'http://';
@@ -886,7 +901,7 @@ class Avatars {
 			return;
 		}
 
-		echo '<div class="wrap">';
+		echo '<div class="wrap avatars-dashboard">';
 		$action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
 
 		if( 'upload_process' == $action && ! isset( $_POST['Alternative'] ) ) {
@@ -998,7 +1013,7 @@ class Avatars {
 			</div>
 			<?php
 		}
-		echo '<div class="wrap">';
+		echo '<div class="wrap avatars-dashboard">';
 		$action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
 
 		if( 'upload_process' == $action && ! isset( $_POST['Alternative'] ) ) {
