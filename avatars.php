@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: MS-Avatare
+Plugin Name: Avatars For Multisite
 Plugin URI: https://cp-psource.github.io/avatars/
-Description: Ermöglicht Benutzern das Hochladen von "Benutzeravataren" und "Blogavataren", die dann in Kommentaren und Blog-/Benutzerlisten auf der Webseite angezeigt werden können
+Description: Allows users to upload 'user avatars' and 'blog avatars' which then can appear in comments and blog / user listings around the site
 Author: PSOURCE
 Author URI: https://github.com/cp-psource
-Version: 1.0.2
-Text Domain: avatars
+Version: 4.1.8
 Network: true
+Text Domain: avatars
 */
 
 /*
-Copyright 2020-2024 WMS N@W (https://github.com/cp-psource)
+Copyright 2020-2024 PSOURCE (https://github.com/cp-psource)
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License (Version 2 - GPLv2) as published by
@@ -40,29 +40,26 @@ $myUpdateChecker = PucFactory::buildUpdateChecker(
 );
  
 //Set the branch that contains the stable release.
-$myUpdateChecker->setBranch('master');
+$myUpdateChecker->setBranch('main');
 
 /**
  * @@@@@@@@@@@@@@@@@ ENDE PS UPDATER 1.3 @@@@@@@@@@@
  **/
 
+
+/*
+jQuery Ajax File Upload script by Jordan Feldstein (https://github.com/jfeldstein/jQuery.AjaxFileUpload.js/blob/master/README)
+See avatars-files/js/signup.js for more information
+*/
+
 if( !is_multisite() )
-	exit( __( 'Das Avatare-Plugin ist nur mit WordPress Multisite kompatibel.', 'avatars' ) );
+	exit( __( 'The avatars plugin is only compatible with WordPress Multisite.', 'avatars' ) );
 
 define( 'AVATARS_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 define( 'AVATARS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) . 'avatars-files/' );
 define( 'AVATARS_PLUGIN_URL', plugin_dir_url( __FILE__ ) . 'avatars-files/' );
 
 require_once( AVATARS_PLUGIN_DIR . 'helpers.php' );
-
-function avatars_plugin_admin_styles() {
-	// Pfad zur CSS-Datei
-	$css_file_url = plugin_dir_url( __FILE__ ) . 'avatars-dashboard.css';
-		
-	// CSS-Datei einbinden
-	wp_enqueue_style( 'avatars_plugin_styles', $css_file_url, array(), '1.0.0', 'all' );
-}
-add_action( 'admin_enqueue_scripts', 'avatars_plugin_admin_styles' );
 
 if ( defined( 'DOING_AJAX' ) && DOING_AJAX )
 	include_once( 'avatars-files/ajax.php' );
@@ -85,9 +82,10 @@ class Avatars {
 	/**
 	 * Current version of the plugin
 	 **/
-	var $current_version = '1.0.2';
+	var $current_version = '4.1.8';
 
 	private $avatars_dir;
+	private $local_default_avatar_path;
 	public $user_avatar_dir;
 	public $blog_avatar_dir;
 
@@ -98,13 +96,13 @@ class Avatars {
 	private $default_blog_avatar = 'identicon';
 
 	private $local_default_avatar_url;
-	private $local_default_avatar_path;
+	private $local_default_avatar_dir;
 
 	private $nginx;
 
 
 	/**
-	 * PHP8 constructor
+	 * PHP5 constructor
 	 **/
 	function __construct() {
 		global $wp_version;
@@ -132,6 +130,9 @@ class Avatars {
 
 		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 		register_deactivation_hook( __FILE__, array( $this, 'deactivate' ) );
+
+		// Do we need to upgrade?
+		add_action( 'init', array( &$this, 'maybe_upgrade' ) );
 
 		// load plugin functions
 		add_action( 'plugins_loaded', array( &$this, 'init_plugin' ) );
@@ -192,7 +193,7 @@ class Avatars {
 		// check if BuddyPress is installed
 		if( defined( 'BP_VERSION' ) ) {
 
-			$message = sprintf( __( 'BuddyPress hat ein eigenes Avatar-System. Die Avatars-Plugin-Funktionen wurden deaktiviert. Bitte entferne die Dateien.', 'avatars' ), $this->avatars_dir );
+			$message = sprintf( __( 'BuddyPress has it\'s own avatar system. The Avatars plugin functions have been deactivated. Please remove the files.', 'avatars' ), $this->avatars_dir );
 			echo "<div class='error'><p>$message</p></div>";
 
 		} else {
@@ -223,19 +224,19 @@ class Avatars {
 					if( copy_dir( WP_CONTENT_DIR . '/avatars', $this->avatars_dir ) ) { // copy files to new directory
 
 						if( $wp_filesystem->delete( WP_CONTENT_DIR . '/avatars', true ) ) // attempt delete of old folder
-							$message = sprintf( __( 'Das Avatare-Plugin speichert jetzt Dateien in %s. Dein alter Ordner wurde verschoben.', 'avatars' ), $this->avatars_dir );
+							$message = sprintf( __( 'The Avatars plugin now store files in %s. Your old folder has been moved.', 'avatars' ), $this->avatars_dir );
 						else
-							$message = sprintf( __( 'Das Avatars-Plugin speichert jetzt Dateien in %s. Dein alter Ordner wurde kopiert. Bitte überprüfe, ob alles einwandfrei funktioniert, und lösche den alten Ordner manuell.', 'avatars' ), $this->avatars_dir );
+							$message = sprintf( __( 'The Avatars plugin now store files in %s. Your old folder has been copied. Please verify that everything is working fine and delete the old folder manually.', 'avatars' ), $this->avatars_dir );
 
 					} else { // unsuccessful copy, warns user
 
-							$message = sprintf( __( 'Das Avatars-Plugin speichert jetzt Dateien in %s. Stelle sicher, dass das Verzeichnis vom Server beschreibbar ist.', 'avatars' ), $this->avatars_dir );
+							$message = sprintf( __( 'The Avatars plugin now store files in %s. Please make sure that directory is writable by the server.', 'avatars' ), $this->avatars_dir );
 
 					}
 
 				} else {
 
-					$message = sprintf( __( 'Das Avatars-Plugin speichert jetzt Dateien in %s. Stelle sicher, dass das übergeordnete Verzeichnis vom Server beschreibbar ist.', 'avatars' ), $this->avatars_dir );
+					$message = sprintf( __( 'The Avatars plugin now store files in %s. Please make sure its parent directory is writable by the server.', 'avatars' ), $this->avatars_dir );
 
 				}
 
@@ -251,7 +252,7 @@ class Avatars {
 
 			// check if plugin directory exists
 			if ( ! wp_mkdir_p( $this->avatars_dir ) ) {
-				$message = sprintf( __( 'Das Avatars-Plugin konnte das Verzeichnis %s nicht erstellen. Ist das übergeordnete Verzeichnis vom Server beschreibbar?', 'avatars' ), $this->avatars_dir );
+				$message = sprintf( __( 'The Avatars plugin was unable to create directory %s. Is its parent directory writable by the server?', 'avatars' ), $this->avatars_dir );
 				echo "<div class='error'><p>$message</p></div>";
 			}
 
@@ -319,6 +320,30 @@ class Avatars {
 		}
 	}
 
+	public function maybe_upgrade() {
+
+		$version_saved = get_site_option( 'avatars_plugin_version', '3.8.1' );
+
+		if ( $version_saved == $this->current_version )
+			return;
+
+		require_once( 'upgrades.php' );
+
+		if ( version_compare( $version_saved, '3.9', '<' ) ) {
+			avatars_upgrade_39();
+		}
+
+		if ( version_compare( $version_saved, '3.9.1', '<' ) ) {
+			avatars_upgrade_391();
+		}
+
+		if ( version_compare( $version_saved, '3.9.3', '<' ) ) {
+			avatars_upgrade_392();
+		}
+
+		update_site_option( 'avatars_plugin_version', $this->current_version );
+	}
+
 	private function delete_avatar_files( $id, $type ) {
 		global $wp_filesystem;
 
@@ -362,7 +387,7 @@ class Avatars {
 	 * Add local avatar in the defaults list.
 	 **/
 	function defaults( $avatar_defaults ) {
-		$avatar_defaults['local_default'] = __( 'Lokal (Avatare Plugin)', 'avatars' );
+		$avatar_defaults['local_default'] = __( 'Local (Avatars plugin)', 'avatars' );
 		return $avatar_defaults;
 	}
 
@@ -415,28 +440,28 @@ class Avatars {
 	function plug_pages() {
 		global $wpdb, $wp_version;
 
-		add_options_page( __( 'Seiten-Avatar', 'avatars' ), __( 'Seiten-Avatar', 'avatars' ), 'manage_options', 'blog-avatar', array( &$this, 'page_edit_blog_avatar' ) );
+		add_options_page( __( 'Site Avatar', 'avatars' ), __( 'Site Avatar', 'avatars' ), 'manage_options', 'blog-avatar', array( &$this, 'page_edit_blog_avatar' ) );
 		
 		if ( current_user_can( 'edit_users' ) )
-			add_submenu_page( 'users.php', __( 'Dein Avatar', 'avatars' ), __( 'Dein Avatar', 'avatars' ), 'manage_options', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
+			add_submenu_page( 'users.php', __( 'Your Avatar', 'avatars' ), __( 'Your Avatar', 'avatars' ), 'manage_options', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
 		else
-			add_submenu_page( 'profile.php', __( 'Dein Avatar', 'avatars' ), __( 'Dein Avatar', 'avatars' ), 'read', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
+			add_submenu_page( 'profile.php', __( 'Your Avatar', 'avatars' ), __( 'Your Avatar', 'avatars' ), 'read', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
 		
 		if ( is_super_admin() && isset( $_GET['page'] ) && $_GET['page'] == 'edit-user-avatar' ) {
 			add_action( 'admin_page_edit', 'page_site_admin_edit_user_avatar' );
-			add_submenu_page( $this->network_top_menu, __( 'Benutzer-Avatar bearbeiten', 'avatars' ), __( 'Benutzer-Avatar bearbeiten', 'avatars' ), 'manage_network_options', 'edit-user-avatar', array( &$this, 'page_site_admin_edit_user_avatar' ) );
+			add_submenu_page( $this->network_top_menu, __( 'Edit User Avatar', 'avatars' ), __( 'Edit User Avatar', 'avatars' ), 'manage_network_options', 'edit-user-avatar', array( &$this, 'page_site_admin_edit_user_avatar' ) );
 		}
 	}
 	
 	function user_plug_pages() {
-		add_submenu_page( 'profile.php', __( 'Dein Avatar', 'avatars' ), __( 'Dein Avatar', 'avatars' ), 'exist', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
+		add_submenu_page( 'profile.php', __( 'Your Avatar', 'avatars' ), __( 'Your Avatar', 'avatars' ), 'exist', 'user-avatar', array( &$this, 'page_edit_user_avatar' ) );
 	}
 
 	/**
 	 * Add network admin page.
 	 **/
 	function network_admin_page() {
-		add_submenu_page( $this->network_top_menu, __( 'Benutzer-Avatar bearbeiten', 'avatars' ), __( 'Benutzer-Avatar bearbeiten', 'avatars' ), 'manage_network_options', 'edit-user-avatar', array( &$this, 'page_site_admin_edit_user_avatar' ) );
+		add_submenu_page( $this->network_top_menu, __( 'Edit User Avatar', 'avatars' ), __( 'Edit User Avatar', 'avatars' ), 'manage_network_options', 'edit-user-avatar', array( &$this, 'page_site_admin_edit_user_avatar' ) );
 	}
 
 	/**
@@ -480,21 +505,21 @@ class Avatars {
 	function to_profile( $profileuser ) {
 		global $submenu_file;
 	?>
-		<h3><?php _e('Netzwerk-Avatar Einstellungen', 'avatars');?></h3>
+		<h3><?php _e('Avatar Settings', 'avatars');?></h3>
 		<table class="form-table">
 			<tbody>
 				<tr>
 					<th><label for="avatar">Avatar</label></th>
-					<td><p><?php _e( 'Dies ist Dein "Benutzer"-Avatar. Es wird angezeigt, wenn Du Kommentare hinterlässt, in den Foren postest und wenn Deine beliebten Beiträge auf der Webseite angezeigt werden.', 'avatars' ); ?></p>
+					<td><p><?php _e( 'This is your "user" avatar. It will appear whenever you leave comments, post in the forums and when your popular posts are displayed around the site.', 'avatars' ); ?></p>
 					<p><?php echo get_avatar( $profileuser->ID ); ?><br></p>
 					<?php
 					if( IS_PROFILE_PAGE )
 						if ( is_user_admin() )
-							echo '<a class="button" href="' . admin_url( "user/$submenu_file?page=user-avatar" ) . '">' . __( 'Avatar ändern', 'avatars' ) . '</a></td>';
+							echo '<a class="button" href="' . admin_url( "user/$submenu_file?page=user-avatar" ) . '">' . __( 'Change Avatar', 'avatars' ) . '</a></td>';
 						else
-							echo '<a class="button" href="' . admin_url( "$submenu_file?page=user-avatar" ) . '">' . __( 'Avatar ändern', 'avatars' ) . '</a></td>';
+							echo '<a class="button" href="' . admin_url( "$submenu_file?page=user-avatar" ) . '">' . __( 'Change Avatar', 'avatars' ) . '</a></td>';
 					else
-						echo '<a class="button" href="' . admin_url( "$this->network_top_menu_slug?page=edit-user-avatar&uid=$profileuser->ID" ) . '">' . __( 'Avatar ändern', 'avatars' ) . '</a></td>';
+						echo '<a class="button" href="' . admin_url( "$this->network_top_menu_slug?page=edit-user-avatar&uid=$profileuser->ID" ) . '">' . __( 'Change Avatar', 'avatars' ) . '</a></td>';
 					?>
 				</tr>
 			</tbody>
@@ -609,7 +634,6 @@ class Avatars {
 	/**
 	 * Crops an image
 	 * 
-	 * @param String $type user or blog
 	 * @param Integer $id ID of the user or blog
 	 * @param String $tmp_file Temporary file
 	 * @param Integer $x1 The start x position to crop from.
@@ -617,30 +641,30 @@ class Avatars {
 	 * @param Integer $width The width to crop.
 	 * @param Integer $height The height to crop.
 	 * @param String $avatar_path Destination path
+	 * @param String $type user or blog (optional)
 	 * 
 	 */
-	function crop_image( $avatar_path, $id, $tmp_file, $x1, $y1, $width, $height, $type = 'user' ) {
-
-		if ( ! in_array( $type, array( 'user', 'blog' ) ) )
+	function crop_image($id, $tmp_file, $x1, $y1, $width, $height, $avatar_path, $type = 'user') {
+		if (!in_array($type, array('user', 'blog'))) {
 			$type = 'user';
+		}
 
 		// Avatar possible sizes
 		$sizes = self::get_avatar_sizes();
-		foreach ( $sizes as $avatar_size ) {
+		foreach ($sizes as $avatar_size) {
 			// Destination filename
 			$dst_file = $avatar_path . "$type-$id-$avatar_size.png";
 
-			$this->delete_temp( $dst_file );
+			$this->delete_temp($dst_file);
 
-			$cropped = wp_crop_image( $tmp_file, $x1, $y1, $width, $height, $avatar_size, $avatar_size, false, $dst_file );
+			$cropped = wp_crop_image($tmp_file, $x1, $y1, $width, $height, $avatar_size, $avatar_size, false, $dst_file);
 
-			if ( ! $cropped || is_wp_error( $cropped ) )
-				wp_die( __( 'Image could not be processed. Please go back and try again.' ), __( 'Image Processing Error' ) );
+			if (!$cropped || is_wp_error($cropped)) {
+				wp_die(__('Image could not be processed. Please go back and try again.'), __('Image Processing Error'));
+			}
 		}
 
-		$this->delete_temp( $tmp_file );
-
-		
+		$this->delete_temp($tmp_file);
 	}
 
 	public static function encode_avatar_folder( $id ) {
@@ -696,7 +720,7 @@ class Avatars {
 			$im = ImageCreateFromgif( $avatar_path . basename( $file_name ) );
 
 		if (!$im) {
-			echo __( 'Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuche es erneut.', 'avatars' );
+			echo __( 'There was an error uploading the file, please try again.', 'avatars' );
 			return false;
 		}
 
@@ -720,172 +744,155 @@ class Avatars {
 		global $plugin_page, $current_site;
 
 		$user_ID = get_current_user_id();
-		$action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
+		$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 		// blog avatar processing
-		if( 'blog-avatar' == $plugin_page ) {
+		if ('blog-avatar' == $plugin_page) {
 			$blog_id = get_current_blog_id();
-			$avatar_path = $this->blog_avatar_dir . self::encode_avatar_folder( $blog_id ) . '/';
-			switch( $action ) {
+			$avatar_path = $this->blog_avatar_dir . self::encode_avatar_folder($blog_id) . '/';
+			switch ($action) {
 				case 'upload_process':
-					if ( isset( $_POST['Reset'] ) ) {
+					if (isset($_POST['Reset'])) {
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-16.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-32.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-48.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-96.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-128.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-192.png');
+						$this->delete_temp($avatar_path . 'blog-' . $blog_id . '-256.png');
 
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-16.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-32.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-48.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-96.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-128.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-192.png');
-						$this->delete_temp( $avatar_path . 'blog-' . $blog_id . '-256.png');
-
-						wp_redirect( admin_url( 'options-general.php?page=blog-avatar&updated=true' ) );
+						wp_redirect(admin_url('options-general.php?page=blog-avatar&updated=true'));
 						exit;
-
-					} elseif ( isset( $_POST['Alternative'] ) ) {
+					} elseif (isset($_POST['Alternative'])) {
 						// Alternative Upload
 
 						$uploaded_file = $_FILES['avatar_file'];
-						$wp_filetype = wp_check_filetype_and_ext( $uploaded_file['tmp_name'], $uploaded_file['name'], false );
+						$wp_filetype = wp_check_filetype_and_ext($uploaded_file['tmp_name'], $uploaded_file['name'], false);
 
-						if ( ! wp_match_mime_types( 'image', $wp_filetype['type'] ) )
-							wp_die( '<div class="error"><p>' . __( 'Die hochgeladene Datei ist kein gültiges Bild. Bitte versuche es erneut.' ) . '</p></div>' );
+						if (!wp_match_mime_types('image', $wp_filetype['type'])) {
+							wp_die('<div class="error"><p>' . __('The uploaded file is not a valid image. Please try again.') . '</p></div>');
+						}
 
+						if (!is_dir($avatar_path)) {
+							wp_mkdir_p($avatar_path);
+						}
 
-						if ( ! is_dir( $avatar_path ) )
-							wp_mkdir_p( $avatar_path );
+						$image_path = $avatar_path . basename($_FILES['avatar_file']['name']);
 
-						$image_path = $avatar_path . basename( $_FILES['avatar_file']['name'] );
+						$this->upload_image($_FILES['avatar_file'], $avatar_path, $image_path, $blog_id, 'blog');
 
-						$this->upload_image( $_FILES['avatar_file'], $avatar_path, $image_path, $blog_id, 'blog' );
-
-						if ( function_exists( 'moderation_image_insert' ) ) {
+						if (function_exists('moderation_image_insert')) {
 							$protocol = is_ssl() ? 'https://' : 'http://';
 							moderation_image_insert('avatar', $blog_id, $user_ID, $avatar_path . 'blog-' . $blog_id . '-128.png', $protocol . $current_site->domain . $current_site->path . 'avatar/blog-' . $blog_id . '-128.png');
 						}
 
-						wp_redirect( admin_url( 'options-general.php?page=blog-avatar&updated=true' ) );
+						wp_redirect(admin_url('options-general.php?page=blog-avatar&updated=true'));
 						exit;
 					}
-				break;
+					break;
 
 				case 'crop_process':
-					$avatar_path = $this->blog_avatar_dir . self::encode_avatar_folder( $blog_id ) . '/';
-
-					$filename = stripslashes_deep( $_POST['file_name'] );
+					$filename = stripslashes_deep($_POST['file_name']);
 					$tmp_file = $avatar_path . $filename;
 
-					$this->crop_image( 'blog', $blog_id, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], $avatar_path );
+					$this->crop_image($blog_id, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], $avatar_path, 'blog');
 					$protocol = is_ssl() ? 'https://' : 'http://';
-					if ( function_exists( 'moderation_image_insert' ) ) {
+					if (function_exists('moderation_image_insert')) {
 						moderation_image_insert('avatar', $blog_id, $user_ID, $avatar_path . 'blog-' . $blog_id . '-128.png', $protocol . $current_site->domain . $current_site->path . 'avatar/blog-' . $blog_id . '-128.png');
 					}
 
-					wp_redirect( admin_url( 'options-general.php?page=blog-avatar&updated=true' ) );
+					wp_redirect(admin_url('options-general.php?page=blog-avatar&updated=true'));
 					exit;
-				break;
+					break;
 
 				default:
-				break;
+					break;
 			}
 		}
 
-		if( 'user-avatar' == $plugin_page || 'edit-user-avatar' == $plugin_page ) {
-
-			
+		if ('user-avatar' == $plugin_page || 'edit-user-avatar' == $plugin_page) {
 			$user_ID = 'edit-user-avatar' == $plugin_page ? $_GET['uid'] : get_current_user_id();
-			$avatar_path = $this->user_avatar_dir . self::encode_avatar_folder( $user_ID ) . '/';
+			$avatar_path = $this->user_avatar_dir . self::encode_avatar_folder($user_ID) . '/';
 
-			switch( $action ) {
+			switch ($action) {
 				case 'upload_process':
-					if ( isset( $_POST['Reset'] ) ) {
+					if (isset($_POST['Reset'])) {
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-16.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-32.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-48.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-96.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-128.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-192.png');
+						$this->delete_temp($avatar_path . 'user-' . $user_ID . '-256.png');
 
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-16.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-32.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-48.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-96.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-128.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-192.png');
-						$this->delete_temp( $avatar_path . 'user-' . $user_ID . '-256.png');
-
-						if ( 'user-avatar' == $plugin_page ) {
-							$link = add_query_arg(
-								array(
-									'updated' => 'true',
-									'updatedmsg' => urlencode( __( 'Avatar zurücksetzen.', 'avatars' ) )
-								)
-							);
-							$link = remove_query_arg( 'action' );
-						}
-						else {
-							$link = admin_url( "$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode( __( 'Avatar zurücksetzen.', 'avatars' ) ) );
+						if ('user-avatar' == $plugin_page) {
+							$link = add_query_arg(array(
+								'updated' => 'true',
+								'updatedmsg' => urlencode(__('Avatar reset.', 'avatars'))
+							));
+							$link = remove_query_arg('action');
+						} else {
+							$link = admin_url("$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode(__('Avatar reset.', 'avatars')));
 						}
 
-						wp_redirect( $link );
+						wp_redirect($link);
 						exit;
-						
-					} elseif ( isset( $_POST['Alternative'] ) ) {
-
-						if ( ! is_dir( $avatar_path ) )
-							wp_mkdir_p( $avatar_path );
+					} elseif (isset($_POST['Alternative'])) {
+						if (!is_dir($avatar_path)) {
+							wp_mkdir_p($avatar_path);
+						}
 
 						$image_path = $avatar_path . basename($_FILES['avatar_file']['name']);
 
-						$this->upload_image( $_FILES['avatar_file'], $avatar_path, $image_path, $user_ID, 'user' );
+						$this->upload_image($_FILES['avatar_file'], $avatar_path, $image_path, $user_ID, 'user');
 
-						if ( function_exists( 'moderation_image_insert' ) && 'user-avatar' == $plugin_page ) {
+						if (function_exists('moderation_image_insert') && 'user-avatar' == $plugin_page) {
 							$protocol = is_ssl() ? 'https://' : 'http://';
 							moderation_image_insert('avatar', get_current_blog_id(), $user_ID, $avatar_path . 'user-' . $user_ID . '-128.png', $protocol . $current_site->domain . $current_site->path . 'avatar/user-' . $user_ID . '-128.png');
 						}
 
-						if ( 'user-avatar' == $plugin_page ) {
-							$link = add_query_arg(
-								array(
-									'updated' => 'true',
-									'updatedmsg' => urlencode( __( 'Avatar aktualisiert', 'avatars' ) )
-								)
-							);
+						if ('user-avatar' == $plugin_page) {
+							$link = add_query_arg(array(
+								'updated' => 'true',
+								'updatedmsg' => urlencode(__('Avatar updated', 'avatars'))
+							));
+							$link = remove_query_arg('action');
+						} else {
+							$link = admin_url("$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode(__('Avatar updated.', 'avatars')));
+						}
 
-							$link = remove_query_arg( 'action' );
-						}
-						else {
-							$link = admin_url( "$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode( __( 'Avatar aktualisiert.', 'avatars' ) ) );
-						}
-						
-						wp_redirect( $link );
+						wp_redirect($link);
 						exit;
 					}
-				break;
+					break;
 
 				case 'crop_process':
-
-					$filename = stripslashes_deep( $_POST['file_name'] );
+					$filename = stripslashes_deep($_POST['file_name']);
 					$tmp_file = $avatar_path . $filename;
 
-					$this->crop_image( $avatar_path, $user_ID, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], 'user' );
-					
-					if ( function_exists( 'moderation_image_insert' ) && 'user-avatar' == $plugin_page ) {
+					$this->crop_image($user_ID, $tmp_file, (int)$_POST['x1'], (int)$_POST['y1'], (int)$_POST['width'], (int)$_POST['height'], $avatar_path, 'user');
+
+					if (function_exists('moderation_image_insert') && 'user-avatar' == $plugin_page) {
 						$protocol = is_ssl() ? 'https://' : 'http://';
-						moderation_image_insert( 'avatar', get_current_blog_id(), $user_ID, $avatar_path . 'user-' . $user_ID . '-128.png', $protocol . $current_site->domain . $current_site->path . 'avatar/user-' . $user_ID . '-128.png');
-					}		
-					
-					if ( 'user-avatar' == $plugin_page ) {
-						$link = add_query_arg(
-							array(
-								'updated' => 'true',
-								'updatedmsg' => urlencode( __( 'Avatar aktualisiert', 'avatars' ) )
-							)
-						);
+						moderation_image_insert('avatar', get_current_blog_id(), $user_ID, $avatar_path . 'user-' . $user_ID . '-128.png', $protocol . $current_site->domain . $current_site->path . 'avatar/user-' . $user_ID . '-128.png');
+					}
 
-						$link = remove_query_arg( 'action' );
+					if ('user-avatar' == $plugin_page) {
+						$link = add_query_arg(array(
+							'updated' => 'true',
+							'updatedmsg' => urlencode(__('Avatar updated', 'avatars'))
+						));
+						$link = remove_query_arg('action');
+					} else {
+						$link = admin_url("$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode(__('Avatar updated.', 'avatars')));
 					}
-					else {
-						$link = admin_url( "$this->network_top_menu_slug?page=edit-user-avatar&uid={$user_ID}&updated=true&updatedmsg=" . urlencode( __( 'Avatar aktualisiert.', 'avatars' ) ) );
-					}
-					
-					wp_redirect( $link );
+
+					wp_redirect($link);
 					exit;
-				break;
+					break;
 
+				default:
+					break;
 			}
 		}
 	}
@@ -897,11 +904,11 @@ class Avatars {
 
 		$blog_id = get_current_blog_id();
 		if( !current_user_can('manage_options') ) {
-			echo '<p>' . __( 'Netter Versuch...', 'avatars' ) . '</p>';  //If accessed properly, this message doesn't appear.
+			echo '<p>' . __( 'Nice Try...', 'avatars' ) . '</p>';  //If accessed properly, this message doesn't appear.
 			return;
 		}
 
-		echo '<div class="wrap avatars-dashboard">';
+		echo '<div class="wrap">';
 		$action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
 
 		if( 'upload_process' == $action && ! isset( $_POST['Alternative'] ) ) {
@@ -909,7 +916,7 @@ class Avatars {
 			$uploaded_file = $_FILES['avatar_file'];
 			$wp_filetype = wp_check_filetype_and_ext( $uploaded_file['tmp_name'], $uploaded_file['name'], false );
 			if ( ! wp_match_mime_types( 'image', $wp_filetype['type'] ) )
-				wp_die( '<div class="error"><p>' . __( 'Die hochgeladene Datei ist kein gültiges Bild. Bitte versuche es erneut.' ) . '</p></div>' );
+				wp_die( '<div class="error"><p>' . __( 'The uploaded file is not a valid image. Please try again.' ) . '</p></div>' );
 
 			$avatar_path = $this->blog_avatar_dir . substr(md5($blog_id), 0, 3) . '/';
 
@@ -924,7 +931,7 @@ class Avatars {
 				//file uploaded...
 				chmod($image_path, 0777);
 			} else{
-				echo __( 'Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.', 'avatars' );
+				echo __( 'There was an error uploading the file, please try again.', 'avatars' );
 			}
 			list($avatar_width, $avatar_height, $avatar_type, $avatar_attr) = getimagesize($image_path);
 
@@ -948,10 +955,10 @@ class Avatars {
 			}
 			// Standard Upload
 			?>
-			<h2><?php _e( 'Bild zuschneiden', 'avatars' ) ?></h2>
+			<h2><?php _e( 'Crop Image', 'avatars' ) ?></h2>
 			<form method="post" action="options-general.php?page=blog-avatar&action=crop_process">
 
-			<p><?php _e( 'Wähle den Teil des Bildes aus, den Du als Avatar verwenden möchtest.', 'avatars' ); ?></p>
+			<p><?php _e( 'Choose the part of the image you want to use as the avatar.', 'avatars' ); ?></p>
 			<div id="testWrap">
 			<img src="<?php echo $this->blog_avatar_url . self::encode_avatar_folder( $blog_id ) . '/' . $_FILES['avatar_file']['name']; ?>" id="upload" width="<?php echo $avatar_width; ?>" height="<?php echo $avatar_height; ?>" />
 			</div>
@@ -965,29 +972,29 @@ class Avatars {
 			<input type="hidden" name="height" id="height" />
 
 			<p class="submit">
-			<input type="submit" class="button-primary" value="<?php _e( 'Bild zuschneiden', 'avatars' ); ?>" />
+			<input type="submit" class="button-primary" value="<?php _e( 'Crop Image', 'avatars' ); ?>" />
 			</p>
 
 			</form>
 			<?php
 		} else {
 			?>
-			<h2><?php _e( 'Seiten Avatar', 'avatars' ) ?></h2>
+			<h2><?php _e( 'Site Avatar', 'avatars' ) ?></h2>
 			<form action="options-general.php?page=blog-avatar&action=upload_process" method="post" enctype="multipart/form-data">
-				<p><?php _e( 'Dies ist Dein "Seiten"-Avatar. Es wird angezeigt, wenn Dein Blog aufgelistet wird (z.B. auf der Startseite des Netzwerks)..', 'avatars' ); ?></p>
+				<p><?php _e( 'This is your "site" avatar. It will appear whenever your blog is listed (for example, on the front page of the site).', 'avatars' ); ?></p>
 				<p><?php echo get_blog_avatar( $blog_id, '96', '' ); ?></p>
 
-				<h3><?php _e( 'Neuen Avatar hochladen', 'avatars' ); ?></h3>
+				<h3><?php _e( 'Upload New Avatar', 'avatars' ); ?></h3>
 				<p>
 				  <input name="avatar_file" id="avatar_file" size="20" type="file">
 				  <input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 				</p>
-				<p><?php _e( 'Zulässige Formate: JPEG, GIF und PNG', 'avatars' ); ?></p>
-				<p><?php _e( 'Wenn Du Probleme beim Zuschneiden Deines Bildes hast, verwende bitte die alternative Upload-Methode (Schaltfläche "Alternativer Upload").', 'avatars' ); ?></p>
+				<p><?php _e( 'Allowed Formats: jpeg, gif, and png', 'avatars' ); ?></p>
+				<p><?php _e( 'If you are experiencing problems cropping your image please use the alternative upload method ("Alternative Upload" button).', 'avatars' ); ?></p>
 				<p class="submit">
-				  <input class="button-primary" name="Submit" value="<?php _e( 'Hochladen', 'avatars' ) ?>" type="submit">
-				  <input class="button" name="Alternative" value="<?php _e( 'Alternatives Hochladen', 'avatars' ) ?>" type="submit">
-				  <input class="button-secondary" name="Reset" value="<?php _e( 'Zurücksetzen', 'avatars' ) ?>" type="submit">
+				  <input class="button-primary" name="Submit" value="<?php _e( 'Upload', 'avatars' ) ?>" type="submit">
+				  <input class="button" name="Alternative" value="<?php _e( 'Alternative Upload', 'avatars' ) ?>" type="submit">
+				  <input class="button-secondary" name="Reset" value="<?php _e( 'Reset', 'avatars' ) ?>" type="submit">
 				</p>
 			</form>
 			<?php
@@ -1013,7 +1020,7 @@ class Avatars {
 			</div>
 			<?php
 		}
-		echo '<div class="wrap avatars-dashboard">';
+		echo '<div class="wrap">';
 		$action = isset( $_GET[ 'action' ] ) ? $_GET[ 'action' ] : '';
 
 		if( 'upload_process' == $action && ! isset( $_POST['Alternative'] ) ) {
@@ -1028,7 +1035,7 @@ class Avatars {
 			if( move_uploaded_file( $_FILES['avatar_file']['tmp_name'], $image_path ) ) {
 				chmod( $image_path, 0777 );
 			} else{
-				echo __( "Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuche es erneut.", 'avatars' );
+				echo __( "There was an error uploading the file, please try again.", 'avatars' );
 				wp_die();
 			}
 			list($avatar_width, $avatar_height, $avatar_type, $avatar_attr) = getimagesize($image_path);
@@ -1054,14 +1061,14 @@ class Avatars {
 
 			// Standard Upload
 			?>
-			<h2><?php _e( 'Bild zuschneiden', 'avatars' ) ?></h2>
+			<h2><?php _e( 'Crop Image', 'avatars' ) ?></h2>
 			<?php
 
 			$link = add_query_arg( 'action','crop_process' );
 			?>
 			<form method="post" action="<?php echo $link; ?>">
 
-			<p><?php _e( 'Wähle den Teil des Bildes aus, den Du als Avatar verwenden möchtest.', 'avatars' ); ?></p>
+			<p><?php _e( 'Choose the part of the image you want to use as the avatar.', 'avatars' ); ?></p>
 			<div id="testWrap">
 			<img src="<?php echo $this->user_avatar_url . self::encode_avatar_folder( $user_ID ) . '/' . $_FILES['avatar_file']['name']; ?>" id="upload" width="<?php echo $avatar_width; ?>" height="<?php echo $avatar_height; ?>" />
 			</div>
@@ -1075,7 +1082,7 @@ class Avatars {
 			<input type="hidden" name="height" id="height" />
 
 			<p class="submit">
-			<input class="button-primary" type="submit" value="<?php _e( 'Bild zuschneiden', 'avatars' ); ?>" />
+			<input class="button-primary" type="submit" value="<?php _e( 'Crop Image', 'avatars' ); ?>" />
 			</p>
 
 			</form>
@@ -1083,7 +1090,7 @@ class Avatars {
 
 		} else {
 			?>
-			<h2><?php _e( 'Dein Avatar', 'avatars' ) ?></h2>
+			<h2><?php _e( 'Your Avatar', 'avatars' ) ?></h2>
 			<?php
 
 			$link = add_query_arg( 'action','upload_process' );
@@ -1094,17 +1101,17 @@ class Avatars {
 			echo get_avatar( $user_ID, '96', get_option('avatar_default') );
 			?>
 			</p>
-			<h3><?php _e( 'Neuen Avatar hochladen', 'avatars' ); ?></h3
+			<h3><?php _e( 'Upload New Avatar', 'avatars' ); ?></h3
 			><p>
 			  <input name="avatar_file" id="avatar_file" size="20" type="file">
 			  <input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 			</p>
-			<p><?php _e( 'Zulässige Formate: JPEG, GIF und PNG', 'avatars' ); ?></p>
-			<p><?php _e( 'Wenn Du Probleme beim Zuschneiden Deines Bildes hast, verwende bitte die alternative Upload-Methode (Schaltfläche "Alternatives Hochladen").', 'avatars' ); ?></p>
+			<p><?php _e( 'Allowed Formats:jpeg, gif, and png', 'avatars' ); ?></p>
+			<p><?php _e( 'If you are experiencing problems cropping your image please use the alternative upload method ("Alternative Upload" button).', 'avatars' ); ?></p>
 			<p class="submit">
-			  <input class="button-primary" name="Submit" value="<?php _e( 'Hochladen', 'avatars' ) ?>" type="submit">
-			  <input class="button" name="Alternative" value="<?php _e( 'Alternatives Hochladen', 'avatars' ) ?>" type="submit">
-			  <input class="button-secondary" name="Reset" value="<?php _e( 'Zurücksetzen', 'avatars' ) ?>" type="submit">
+			  <input class="button-primary" name="Submit" value="<?php _e( 'Upload', 'avatars' ) ?>" type="submit">
+			  <input class="button" name="Alternative" value="<?php _e( 'Alternative Upload', 'avatars' ) ?>" type="submit">
+			  <input class="button-secondary" name="Reset" value="<?php _e( 'Reset', 'avatars' ) ?>" type="submit">
 			</p>
 			</form>
 			<?php
@@ -1137,7 +1144,7 @@ class Avatars {
 			$wp_filetype = wp_check_filetype_and_ext( $uploaded_file['tmp_name'], $uploaded_file['name'], false );
 
 			if ( ! wp_match_mime_types( 'image', $wp_filetype['type'] ) )
-				wp_die( '<div class="error"><p>' . __( 'Die hochgeladene Datei ist kein gültiges Bild. Bitte versuche es erneut.' ) . '</p></div>' );
+				wp_die( '<div class="error"><p>' . __( 'The uploaded file is not a valid image. Please try again.' ) . '</p></div>' );
 
 			// Standard Upload
 			$avatar_dir = $this->user_avatar_dir . Avatars::encode_avatar_folder( $_GET['uid'] ) . '/';
@@ -1152,7 +1159,7 @@ class Avatars {
 				//file uploaded...
 				chmod($image_path, 0777);
 			} else{
-				echo __( "Beim Hochladen der Datei ist ein Fehler aufgetreten. Bitte versuche es erneut.", 'avatars' );
+				echo __( "There was an error uploading the file, please try again.", 'avatars' );
 				wp_die();
 			}
 			list($avatar_width, $avatar_height, $avatar_type, $avatar_attr) = getimagesize($image_path);
@@ -1177,10 +1184,10 @@ class Avatars {
 			}
 
 			?>
-			<h2><?php _e( 'Bild zuschneiden', 'avatars' ) ?></h2>
+			<h2><?php _e( 'Crop Image', 'avatars' ) ?></h2>
 			<form method="post" action="<?php echo $this->network_top_menu ?>?page=edit-user-avatar&uid=<?php echo $_GET['uid']; ?>&action=crop_process">
 
-			<p><?php _e( 'Wähle den Teil des Bildes aus, den Du als Avatar verwenden möchtest.', 'avatars' ); ?></p>
+			<p><?php _e( 'Choose the part of the image you want to use as the avatar.', 'avatars' ); ?></p>
 			<div id="testWrap">
 			<img src="<?php echo $this->user_avatar_url . Avatars::encode_avatar_folder( $_GET['uid'] ) . '/' . $_FILES['avatar_file']['name']; ?>" id="upload" width="<?php echo $avatar_width; ?>" height="<?php echo $avatar_height; ?>" />
 			</div>
@@ -1194,7 +1201,7 @@ class Avatars {
 			<input type="hidden" name="height" id="height" />
 
 			<p class="submit">
-			<input class="button-primary" type="submit" value="<?php _e( 'Bild zuschneiden', 'avatars' ); ?>" />
+			<input class="button-primary" type="submit" value="<?php _e( 'Crop Image', 'avatars' ); ?>" />
 			</p>
 
 			</form>
@@ -1203,20 +1210,20 @@ class Avatars {
 		} else {
 
 			?>
-			<h2><?php _e( 'Benutzer Avatar', 'avatars' ) ?></h2>
+			<h2><?php _e( 'User Avatar', 'avatars' ) ?></h2>
 			<form action="<?php echo $this->network_top_menu ?>?page=edit-user-avatar&action=upload_process&uid=<?php echo $_GET['uid']; ?>" method="post" enctype="multipart/form-data">
 				<p><?php echo get_avatar( $_GET['uid'], '96', get_option( 'avatar_default' ) ); ?></p>
-				<h3><?php _e( 'Neuen Avatar hochladen', 'avatars' ); ?></h3>
+				<h3><?php _e( 'Upload New Avatar', 'avatars' ); ?></h3>
 				<p>
 				  <input name="avatar_file" id="avatar_file" size="20" type="file">
 				  <input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 				</p>
-				<p><?php _e( 'Zulässige Formate: JPEG, GIF und PNG', 'avatars' ); ?></p>
-				<p><?php _e( 'Wenn Du Probleme beim Zuschneiden des Bildes hast, verwende bitte die alternative Upload-Methode (Schaltfläche "Alternatives Hochladen")..', 'avatars' ); ?></p>
+				<p><?php _e( 'Allowed Formats:jpeg, gif, and png', 'avatars' ); ?></p>
+				<p><?php _e( 'If you are experiencing problems cropping the image please use the alternative upload method ("Alternative Upload" button).', 'avatars' ); ?></p>
 				<p class="submit">
-				  <input class="button-primary" name="Submit" value="<?php _e( 'Hochladen', 'avatars' ) ?>" type="submit">
-				  <input class="button" name="Alternative" value="<?php _e( 'Alternatives Hochladen', 'avatars' ) ?>" type="submit">
-				  <input class="button-secondary" name="Reset" value="<?php _e( 'Zurücksetzen', 'avatars' ) ?>" type="submit">
+				  <input class="button-primary" name="Submit" value="<?php _e( 'Upload', 'avatars' ) ?>" type="submit">
+				  <input class="button" name="Alternative" value="<?php _e( 'Alternative Upload', 'avatars' ) ?>" type="submit">
+				  <input class="button-secondary" name="Reset" value="<?php _e( 'Reset', 'avatars' ) ?>" type="submit">
 				</p>
 			</form>
 			<?php
@@ -1454,11 +1461,9 @@ class Avatars {
 			$default = 'https://www.gravatar.com/avatar/' . md5($id) . '?r=G&d=mm&s=' . $size;
 		else {
 			$admin_email = get_bloginfo( 'admin_email' );
-			$default = $this->get_avatar( $admin_email, $size, $_default, false, array( 'return_path' => true ) );
+			$default = $this->get_avatar( $admin_email, $size, $_default, $alt, array( 'return_path' => true ) );
 		}
 
-		$default = apply_filters( 'get_blog_default_avatar', $default, $id, $size );
-		
 		if ( !empty($id) ) {
 			//user exists locally - check if avatar exists
 

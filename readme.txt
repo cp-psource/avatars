@@ -3,7 +3,7 @@ Contributors: DerN3rd (PSOURCE)
 Tags: multisite, blogs, avatare, classicpress, wordpress, psource
 Requires at least: 4.9
 Tested up to: 5.6
-Stable tag: 1.0.2
+Stable tag: 4.1.8
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -34,7 +34,7 @@ MS-Avatare löst dieses Problem, indem es Benutzern ermöglicht, sowohl persönl
 Verknüpfe Benutzernamen mit Gesichtern und Blog-Titel mit Unternehmensbranding – füge mit Avataren Profilbilder zu ClassicPress hinzu.
 
 [Projekt Seite](https://cp-psource.github.io/avatars/)
-[GitHub](https://github.com/cp-psource/blogs-directory)
+[GitHub](https://github.com/cp-psource/avatars)
 
 
 [POWERED BY PSOURCE](https://github.com/cp-psource)

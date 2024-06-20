@@ -1,5 +1,5 @@
-Plugin Name: MS-Avatare
-Author: DerN3rd
+Plugin Name: Avatars
+Author: Andrew Billits, Ulrich Sossou
 
 Files:
 ----------------------------------------------------------------------

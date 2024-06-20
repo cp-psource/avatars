@@ -22,13 +22,13 @@ if ( !is_file( $file ) ) {
 			if ( $default_blog_avatar == 'local_default' ) {
 				$file = $local_default_avatar_path . $tmp_avatar_size . '.png';
 			} else {
-				$file = 'https://www.gravatar.com/avatar/' . md5($tmp_avatar_id) . '?r=G&d=' . $default_blog_avatar . '&s=' . $tmp_avatar_size;
+				$file = 'http://www.gravatar.com/avatar/' . md5($tmp_avatar_id) . '?r=G&d=' . $default_blog_avatar . '&s=' . $tmp_avatar_size;
 			}
 		} else {
 			if ( empty( $default_user_avatar ) || 'local_default' == $default_user_avatar ) {
 				$file = $local_default_avatar_path . $tmp_avatar_size . '.png';
 			} else {
-				$file = 'https://www.gravatar.com/avatar/' . md5($tmp_avatar_id) . '?r=G&d=' . $default_user_avatar . '&s=' . $tmp_avatar_size;
+				$file = 'http://www.gravatar.com/avatar/' . md5($tmp_avatar_id) . '?r=G&d=' . $default_user_avatar . '&s=' . $tmp_avatar_size;
 			}
 		}
 		$default_avatar = "1";

@@ -1,9 +1,9 @@
 <?php
 
-// Bloghosting Integration
+// Pro Sites integration
 
 /**
- * Avatars was not enqueueing scripts on Bloghosting signup screen
+ * Avatars was not enqueueing scripts on Pro Sites signup screen
  * @return Boolean
  */
 add_filter( 'avatars_enqueue_signup_scripts', 'avatars_pro_sites_enqueue_scripts', 10, 2 );

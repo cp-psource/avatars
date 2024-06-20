@@ -48,7 +48,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           //  with uninit() later, to allow updating that settings
           if($element.data('ajaxUploader-setup') === true) return;
 
-          $element.on("change", function()
+          $element.change(function()
           {
             // since a new image was selected, reset the marker
             uploading_file = false;
@@ -65,7 +65,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             // do nothing
           } else
           {
-            settings.submit_button.on('click',function(e)
+            settings.submit_button.click(function(e)
             {
               // Prevent non-AJAXy submit
               e.preventDefault();
@@ -103,7 +103,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
               // let onStart have the option to cancel the upload
               if(ret !== false)
               {
-                $element.parent('form').on("submit", function(e) { e.stopPropagation(); }).trigger("submit");
+                $element.parent('form').submit(function(e) { e.stopPropagation(); }).submit();
               }
             }
           };
@@ -118,6 +118,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
           var handleResponse = function(loadedFrame, element) {
             var response, responseStr = loadedFrame.contentWindow.document.body.innerHTML;
             try {
+              //response = $.parseJSON($.trim(responseStr));
               response = JSON.parse(responseStr);
             } catch(e) {
               response = responseStr;
@@ -143,7 +144,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
             // Create an iframe to submit through, using a semi-unique ID
             var frame_id = 'ajaxUploader-iframe-' + Math.round(new Date().getTime() / 1000)
             $('body').after('<iframe width="0" height="0" style="display:none;" name="'+frame_id+'" id="'+frame_id+'"/>');
-            $('#'+frame_id).on("load", function() {
+            $('#'+frame_id).load(function() {
               handleResponse(this, element);
             });
 
