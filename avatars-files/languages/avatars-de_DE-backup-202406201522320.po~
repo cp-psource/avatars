@@ -6,12 +6,15 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/cp-psource/avatars/issues\n"
 "POT-Creation-Date: 2017-06-27 11:43:42+00:00\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
-"X-Generator: grunt-wp-i18n 0.5.4\n"
+"PO-Revision-Date: 2024-06-20 15:18+0000\n"
+"Last-Translator: \n"
+"Language-Team: Deutsch\n"
+"X-Generator: Loco https://localise.biz/\n"
+"Language: de_DE\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Loco-Version: 2.6.10; wp-6.5.4"
 
 #: avatars-files/avatar.php:11
 msgid "Invalid Request"
@@ -65,7 +68,8 @@ msgid ""
 msgstr ""
 
 #: avatars.php:211
-msgid "The Avatars plugin now store files in %s. Your old folder has been moved."
+msgid ""
+"The Avatars plugin now store files in %s. Your old folder has been moved."
 msgstr ""
 
 #: avatars.php:213
@@ -77,8 +81,8 @@ msgstr ""
 
 #: avatars.php:217
 msgid ""
-"The Avatars plugin now store files in %s. Please make sure that directory "
-"is writable by the server."
+"The Avatars plugin now store files in %s. Please make sure that directory is "
+"writable by the server."
 msgstr ""
 
 #: avatars.php:223
@@ -112,9 +116,11 @@ msgstr ""
 #: avatars.php:497
 msgid ""
 "This is your \"user\" avatar. It will appear whenever you leave comments, "
-"post in the forums and when your popular posts are displayed around the "
-"site."
+"post in the forums and when your popular posts are displayed around the site."
 msgstr ""
+"Dies ist Dein Benutzer-Avatar. Er wird angezeigt, wenn Du Kommentare "
+"hinterlässt, in den Foren postest und wenn Deine beliebten Beiträge auf der "
+"Webseite angezeigt werden."
 
 #: avatars.php:502 avatars.php:504 avatars.php:506
 msgid "Change Avatar"
@@ -167,6 +173,8 @@ msgid ""
 "This is your \"site\" avatar. It will appear whenever your blog is listed "
 "(for example, on the front page of the site)."
 msgstr ""
+"Dies ist Dein Webseiten-Avatar. Er wird immer angezeigt, wenn Dein Blog "
+"aufgeführt wird (beispielsweise auf der Startseite des Netzwerks)."
 
 #: avatars.php:989 avatars.php:1106 avatars.php:1218
 msgid "Upload New Avatar"
@@ -213,7 +221,7 @@ msgid "Avatars For Multisite"
 msgstr ""
 
 #. Plugin URI of the plugin/theme
-msgid "https://cp-psource.github.io/avatars"
+msgid "https://cp-psource.github.io/avatars/"
 msgstr ""
 
 #. Description of the plugin/theme
@@ -227,5 +235,5 @@ msgid "PSOURCE"
 msgstr ""
 
 #. Author URI of the plugin/theme
-msgid "https://github.com/cp-psource"
+msgid "https://github.com/cp-psource/"
 msgstr ""

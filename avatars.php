@@ -8,6 +8,7 @@ Author URI: https://github.com/cp-psource
 Version: 4.1.8
 Network: true
 Text Domain: avatars
+Domain Path: avatars-files/languages
 */
 
 /*

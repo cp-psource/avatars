@@ -77,7 +77,7 @@ module.exports = function(grunt) {
                 type: 'wp-plugin',
                 domainPath: 'avatars-files/languages',
                 potHeaders: {
-                    'report-msgid-bugs-to': 'https://wpmudev.org',
+                    'report-msgid-bugs-to': 'https://github.com/cp-psource/avatars/issues',
                     'language-team': 'LANGUAGE <EMAIL@ADDRESS>'
                 }
             },
