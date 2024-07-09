@@ -156,7 +156,7 @@ class Avatars {
 	}
 
 	public function deactivate() {
-		update_site_option( 'avatars_plugin_version' );
+		delete_site_option( 'avatars_plugin_version' );
 	}
 
 	public function load_textdomain() {
